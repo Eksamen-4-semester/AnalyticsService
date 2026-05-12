@@ -44,6 +44,7 @@ public class WorkoutSessionRepositoryMongoDbTests
         // Assert
         Assert.IsNotNull(result);
         Assert.AreEqual(session.Title, result.Title);
+        Assert.IsNotNull(result.StartedAt);
     }
 
     [TestMethod]
@@ -121,5 +122,23 @@ public class WorkoutSessionRepositoryMongoDbTests
         // Assert
         Assert.IsNotNull(result);
         Assert.AreEqual(sessionId, result.SessionId);
+    }
+
+    [TestMethod]
+    public async Task CompleteWorkoutSession_ShouldReturnUpdatedSession_WhenUpdateIsSuccessful()
+    {
+        // Arrange
+        var memberId = 1;
+        var sessionId = 1;
+        var updatedSession = new WorkoutSession { MemberId = memberId, SessionId = sessionId, EndedAt = DateTime.UtcNow };
+        _workoutSessionCollectionMock.Setup(c => c.FindOneAndUpdateAsync(It.IsAny<FilterDefinition<WorkoutSession>>(), It.IsAny<UpdateDefinition<WorkoutSession>>(), It.IsAny<FindOneAndUpdateOptions<WorkoutSession, WorkoutSession>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(updatedSession);
+
+        // Act
+        var result = await _workoutSessionRepository.CompleteWorkoutSession(memberId, sessionId);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsNotNull(result.EndedAt);
     }
 }

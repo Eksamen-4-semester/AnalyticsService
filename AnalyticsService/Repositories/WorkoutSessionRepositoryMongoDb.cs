@@ -15,6 +15,7 @@ public class WorkoutSessionRepositoryMongoDb(
     public async Task<WorkoutSession> CreateWorkSession(WorkoutSession session)
     {
         session.SessionId = await GetMaxId() + 1;
+        session.StartedAt = DateTime.UtcNow;
         await _workoutSessionCollection.InsertOneAsync(session);
         return session;
     }
@@ -45,6 +46,17 @@ public class WorkoutSessionRepositoryMongoDb(
     {
         var filter = Builders<WorkoutSession>.Filter.Where(s => s.MemberId == memberId && s.SessionId == sessionId);
         return await _workoutSessionCollection.FindOneAndDeleteAsync(filter);
+    }
+
+    public async Task<WorkoutSession?> CompleteWorkoutSession(int memberId, int sessionId)
+    {
+        var filter = Builders<WorkoutSession>.Filter.Where(s => s.MemberId == memberId && s.SessionId == sessionId);
+        var update = Builders<WorkoutSession>.Update.Set(s => s.EndedAt, DateTime.UtcNow);
+        var options = new FindOneAndUpdateOptions<WorkoutSession, WorkoutSession>
+        {
+            ReturnDocument = ReturnDocument.After
+        };
+        return await _workoutSessionCollection.FindOneAndUpdateAsync(filter, update, options);
     }
 
     private async Task<int> GetMaxId()
