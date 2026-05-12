@@ -158,4 +158,24 @@ public class WorkoutSessionController : Controller
         _logger.LogInformation("Session deleted successfully. SessionId: {SessionId}", sessionId);
         return NoContent();
     }
+
+    // Complete a workout session for a member
+    [HttpPatch]
+    [Route("/api/members/{memberId}/sessions/{sessionId}/complete")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> CompleteWorkoutSession(int memberId, int sessionId)
+    {
+        _logger.LogInformation("Called {Function} for memberId: {MemberId} sessionId: {SessionId}", nameof(CompleteWorkoutSession), memberId, sessionId);
+ 
+        var result = await _workoutSessionRepository.CompleteWorkoutSession(memberId, sessionId);
+        if (result == null)
+        {
+            _logger.LogWarning("Complete session failed — sessionId: {SessionId} not found", sessionId);
+            return NotFound($"Session with id {sessionId} not found");
+        }
+ 
+        _logger.LogInformation("Session completed successfully. SessionId: {SessionId}", sessionId);
+        return Ok(result);
+    }
 }
