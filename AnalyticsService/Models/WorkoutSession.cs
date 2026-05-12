@@ -14,6 +14,8 @@ public class WorkoutSession
     public string Title { get; set; } = string.Empty;
     public MuscleGroup MuscleGroup { get; set; }
     public DateTime Date { get; set; }
+    public DateTime? StartedAt { get; set; }   // ← timer starter
+    public DateTime? EndedAt { get; set; }
     public int DurationMinutes { get; set; }
     public List<SessionExercise> Exercises { get; set; } = new();
 }
