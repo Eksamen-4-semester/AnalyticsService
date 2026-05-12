@@ -1,23 +1,28 @@
+using AnalyticsService.Repositories;
+using MongoDB.Driver;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var connectionString = builder.Configuration.GetConnectionString("MongoDB") 
+                       ?? "mongodb://localhost:27017";
+
+builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(connectionString));
+builder.Services.AddScoped<IMongoDatabase>(sp =>
+    sp.GetRequiredService<IMongoClient>().GetDatabase("AnalyticsServiceDb"));
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddScoped<IWorkSessionRepository, WorkoutSessionRepositoryMongoDb>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
