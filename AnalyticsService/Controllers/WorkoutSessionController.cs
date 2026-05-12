@@ -66,4 +66,66 @@ public class WorkoutSessionController : Controller
         _logger.LogInformation("Session created successfully. SessionId: {SessionId}", session.SessionId);
         return Created($"/api/members/{memberId}/sessions/{session.SessionId}", session);
     }
+    
+    [HttpDelete]
+    [Route("/api/members/{memberId}/sessions/{sessionId}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteWorkoutSession(int memberId, int sessionId)
+    {
+        _logger.LogInformation("Called {Function} for memberId: {MemberId} sessionId: {SessionId}", 
+            nameof(DeleteWorkoutSession), memberId, sessionId);
+
+        var deleted = await _workOutSessionRepository.DeleteWorkSession(memberId, sessionId);
+        if (deleted == null)
+        {
+            _logger.LogWarning("Delete session failed — sessionId: {SessionId} not found for memberId: {MemberId}", 
+                sessionId, memberId);
+            return NotFound($"Session with id {sessionId} not found");
+        }
+
+        _logger.LogInformation("Session deleted successfully. SessionId: {SessionId}", sessionId);
+        return NoContent();
+    }
+    
+    [HttpDelete]
+    [Route("/api/members/{memberId}/sessions/{sessionId}/exercises/{exerciseId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteExerciseFromSession(int memberId, int sessionId, int exerciseId)
+    {
+        _logger.LogInformation("Called {Function} for memberId: {MemberId} sessionId: {SessionId} exerciseId: {ExerciseId}",
+            nameof(DeleteExerciseFromSession), memberId, sessionId, exerciseId);
+
+        var deleted = await _workOutSessionRepository.DeleteExerciseFromSession(memberId, sessionId, exerciseId);
+        if (deleted == null)
+        {
+            _logger.LogWarning("Delete exercise failed — exerciseId: {ExerciseId} not found in sessionId: {SessionId}",
+                exerciseId, sessionId);
+            return NotFound($"Exercise with id {exerciseId} not found in session {sessionId}");
+        }
+
+        _logger.LogInformation("Exercise deleted successfully. ExerciseId: {ExerciseId}", exerciseId);
+        return NoContent();
+    }
+    [HttpDelete]
+    [Route("/api/members/{memberId}/sessions/{sessionId}/exercises/{exerciseId}/sets/{setId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteSetFromExercise(int memberId, int sessionId, int exerciseId, int setId)
+    {
+        _logger.LogInformation("Called {Function} for memberId: {MemberId} sessionId: {SessionId} exerciseId: {ExerciseId} setId: {SetId}",
+            nameof(DeleteSetFromExercise), memberId, sessionId, exerciseId, setId);
+
+        var deleted = await _workOutSessionRepository.DeleteSetFromExercise(memberId, sessionId, exerciseId, setId);
+        if (deleted == null)
+        {
+            _logger.LogWarning("Delete set failed — setId: {SetId} not found in exerciseId: {ExerciseId}",
+                setId, exerciseId);
+            return NotFound($"Set with id {setId} not found in exercise {exerciseId}");
+        }
+
+        _logger.LogInformation("Set deleted successfully. SetId: {SetId}", setId);
+        return NoContent();
+    }
 }

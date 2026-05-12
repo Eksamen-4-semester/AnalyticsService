@@ -27,6 +27,56 @@ public class WorkoutSessionRepositoryMongoDb(
             throw;
         }
     }
+    public async Task<WorkoutSession?> DeleteWorkSession(int memberId, int sessionId)
+    {
+        var filter = Builders<WorkoutSession>.Filter.And(
+            Builders<WorkoutSession>.Filter.Eq(x => x.MemberId, memberId),
+            Builders<WorkoutSession>.Filter.Eq(x => x.SessionId, sessionId)
+        );
+
+        return await _workoutSessionCollection.FindOneAndDeleteAsync(filter);
+    }
+    public async Task<WorkoutSession?> DeleteExerciseFromSession(int memberId, int sessionId, int exerciseId)
+    {
+        var filter = Builders<WorkoutSession>.Filter.And(
+            Builders<WorkoutSession>.Filter.Eq(x => x.MemberId, memberId),
+            Builders<WorkoutSession>.Filter.Eq(x => x.SessionId, sessionId)
+        );
+
+        var update = Builders<WorkoutSession>.Update.PullFilter(
+            x => x.Exercises,
+            Builders<SessionExercise>.Filter.Eq(e => e.ExerciseId, exerciseId)
+        );
+
+        var options = new FindOneAndUpdateOptions<WorkoutSession>
+        {
+            ReturnDocument = ReturnDocument.After
+        };
+
+        return await _workoutSessionCollection.FindOneAndUpdateAsync(filter, update, options);
+    }
+    
+    public async Task<WorkoutSession?> DeleteSetFromExercise(int memberId, int sessionId, int exerciseId, int setId)
+    {
+        var filter = Builders<WorkoutSession>.Filter.And(
+            Builders<WorkoutSession>.Filter.Eq(x => x.MemberId, memberId),
+            Builders<WorkoutSession>.Filter.Eq(x => x.SessionId, sessionId),
+            Builders<WorkoutSession>.Filter.ElemMatch(x => x.Exercises, 
+                e => e.ExerciseId == exerciseId)
+        );
+
+        var update = Builders<WorkoutSession>.Update.PullFilter(
+            "Exercises.$.Sets",
+            Builders<ExerciseSet>.Filter.Eq(s => s.SetId, setId)
+        );
+
+        var options = new FindOneAndUpdateOptions<WorkoutSession>
+        {
+            ReturnDocument = ReturnDocument.After
+        };
+
+        return await _workoutSessionCollection.FindOneAndUpdateAsync(filter, update, options);
+    }
 
     private async Task<int> GetMaxId()
     {
