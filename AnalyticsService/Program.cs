@@ -1,4 +1,5 @@
 using AnalyticsService.Repositories;
+using AnalyticsService.Repositories.Interfaces;
 using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +12,9 @@ builder.Services.AddScoped<IMongoDatabase>(sp =>
     sp.GetRequiredService<IMongoClient>().GetDatabase("AnalyticsServiceDb"));
 
 builder.Services.AddControllers();
-builder.Services.AddScoped<IWorkSessionRepository, WorkoutSessionRepositoryMongoDb>();
+builder.Services.AddScoped<IWorkoutSessionRepository, WorkoutSessionRepositoryMongoDb>();
+builder.Services.AddScoped<IExerciseSetRepository, ExerciseSetRepositoryMongoDb>();
+builder.Services.AddScoped<ISessionExerciseRepository, SessionRepositoryMongoDb>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
