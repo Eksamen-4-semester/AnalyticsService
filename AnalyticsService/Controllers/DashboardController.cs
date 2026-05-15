@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace AnalyticsService.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/members")]
     public class DashboardController : ControllerBase
     {
         private readonly ILogger<DashboardController> _logger;
@@ -20,7 +20,7 @@ namespace AnalyticsService.Controllers
             _dashboardRepository = dashboardRepository;
         }
 
-        [HttpGet("{memberId}")]
+        [HttpGet("{memberId}/dashboard")]
         public async Task<IActionResult> GetDashboard(int memberId)
         {
             var sessions = await _dashboardRepository.GetSessionsByMemberId(memberId);

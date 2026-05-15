@@ -1,23 +1,9 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
-USER $APP_UID
+﻿FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
-
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["AnalyticsService/AnalyticsService.csproj", "AnalyticsService/"]
-RUN dotnet restore "AnalyticsService/AnalyticsService.csproj"
 COPY . .
-WORKDIR "/src/AnalyticsService"
-RUN dotnet build "./AnalyticsService.csproj" -c $BUILD_CONFIGURATION -o /app/build
-
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./AnalyticsService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
-FROM base AS final
+RUN dotnet restore
+RUN dotnet publish -o /app/published-app
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS runtime
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AnalyticsService.dll"]
+COPY --from=build /app/published-app /app
+ENTRYPOINT ["dotnet", "/app/AnalyticsService.dll"]
