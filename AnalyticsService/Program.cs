@@ -55,10 +55,18 @@ try
             path: "mongo",
             mountPoint: "secret");
 
-    string connectionString = mongoSecrets
-        .Data.Data["MONGO_CONNECTION_STRING"]?.ToString()
-        ?? throw new NullReferenceException(
-            "MONGO_CONNECTION_STRING not found in Vault");
+    string connectionString;
+    if (Environment.GetEnvironmentVariable("DOCKER") != null)
+    {
+        connectionString = mongoSecrets
+                               .Data.Data["MONGO_CONNECTION_STRING"]?.ToString()
+                           ?? throw new NullReferenceException(
+                               "MONGO_CONNECTION_STRING not found in Vault");
+    }
+    else
+    {
+        connectionString = "mongodb://admin:secret123@localhost:27017/?authSource=admin";
+    }
 
     logger.Debug("MongoDB connection string loaded from Vault");
     if (builder.Environment.IsDevelopment())

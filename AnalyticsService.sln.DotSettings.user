@@ -1,4 +1,4 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=14ffad31_002Defda_002D4914_002D9d74_002D2490a9fbe008/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="DashboardControllerTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Project Location="/Users/thanushanbalasubramaniam/AnalyticsService/AnalyticsService.Tests" Presentation="&amp;lt;AnalyticsService.Tests&amp;gt;" /&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=14ffad31_002Defda_002D4914_002D9d74_002D2490a9fbe008/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="DashboardControllerTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Project Location="\Users\thanushanbalasubramaniam\AnalyticsService\AnalyticsService.Tests" Presentation="&amp;lt;AnalyticsService.Tests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
