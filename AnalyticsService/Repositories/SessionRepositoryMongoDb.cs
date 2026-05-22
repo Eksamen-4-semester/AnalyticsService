@@ -15,6 +15,13 @@ public class SessionRepositoryMongoDb : ISessionExerciseRepository
     public async Task<SessionExercise?> AddExerciseToSession(int memberId, int sessionId, SessionExercise exercise)
     {
         var filter = Builders<WorkoutSession>.Filter.Where(s => s.MemberId == memberId && s.SessionId == sessionId);
+        var session = await _workoutSessionCollection.Find(filter).FirstOrDefaultAsync();
+        if (session == null) return null;
+        
+        exercise.ExerciseId = session.Exercises.Any()
+            ? session.Exercises.Max(e => e.ExerciseId) + 1
+            : 1;
+
         var update = Builders<WorkoutSession>.Update.Push(s => s.Exercises, exercise);
         var options = new FindOneAndUpdateOptions<WorkoutSession, WorkoutSession>
         {
