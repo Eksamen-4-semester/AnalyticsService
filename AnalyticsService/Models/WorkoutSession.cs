@@ -27,6 +27,6 @@ public enum MuscleGroup
     Shoulders,
     Arms,
     Core,
-    FulLBody,
+    FullBody,
     Cardio
 }

@@ -1,3 +1,4 @@
+using AnalyticsService.Data;
 using AnalyticsService.Repositories;
 using AnalyticsService.Repositories.Interfaces;
 using MongoDB.Driver;
@@ -102,7 +103,6 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddAuthorization();
-
 builder.Logging.ClearProviders();
 builder.Host.UseNLog();
 
@@ -143,3 +143,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+var database = app.Services.GetRequiredService<IMongoDatabase>();
+await SeedData.InitializeAsync(database);
